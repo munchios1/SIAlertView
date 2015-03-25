@@ -38,6 +38,8 @@
 		7E23C6A31732776100784CF1 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E23C6A21732776100784CF1 /* Icon@2x.png */; };
 		7E23C6A8173277EA00784CF1 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E23C6A7173277EA00784CF1 /* Icon-72.png */; };
 		7E23C6AA173277EE00784CF1 /* Icon-72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E23C6A9173277EE00784CF1 /* Icon-72@2x.png */; };
+		A36B8CFC1AC2D5440081A8E4 /* border@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A36B8CFB1AC2D5440081A8E4 /* border@2x.png */; };
+		A3962C751AC2C25500D3E666 /* buttonbg@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = A3962C741AC2C25500D3E666 /* buttonbg@3x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +80,8 @@
 		7E23C6A21732776100784CF1 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		7E23C6A7173277EA00784CF1 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
 		7E23C6A9173277EE00784CF1 /* Icon-72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72@2x.png"; sourceTree = "<group>"; };
+		A36B8CFB1AC2D5440081A8E4 /* border@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "border@2x.png"; sourceTree = "<group>"; };
+		A3962C741AC2C25500D3E666 /* buttonbg@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "buttonbg@3x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +150,8 @@
 		7E23C67817325EAA00784CF1 /* SIAlertViewExample */ = {
 			isa = PBXGroup;
 			children = (
+				A36B8CFB1AC2D5440081A8E4 /* border@2x.png */,
+				A3962C741AC2C25500D3E666 /* buttonbg@3x.png */,
 				72AD5C8517BD1B7200A85539 /* Button Images */,
 				7E23C6A41732776700784CF1 /* Icons */,
 				7E23C6A5173277AB00784CF1 /* UI */,
@@ -273,6 +279,8 @@
 				7E23C6A11732775E00784CF1 /* Icon.png in Resources */,
 				7E23C6A31732776100784CF1 /* Icon@2x.png in Resources */,
 				7E23C6A8173277EA00784CF1 /* Icon-72.png in Resources */,
+				A36B8CFC1AC2D5440081A8E4 /* border@2x.png in Resources */,
+				A3962C751AC2C25500D3E666 /* buttonbg@3x.png in Resources */,
 				7E23C6AA173277EE00784CF1 /* Icon-72@2x.png in Resources */,
 				72AD5C9217BD1B7200A85539 /* button-cancel-d.png in Resources */,
 				72AD5C9317BD1B7200A85539 /* button-cancel-d@2x.png in Resources */,

@@ -23,8 +23,10 @@ NSString *const SIAlertViewDidDismissNotification = @"SIAlertViewDidDismissNotif
 #define CONTENT_PADDING_LEFT 10
 #define CONTENT_PADDING_TOP 12
 #define CONTENT_PADDING_BOTTOM 10
-#define BUTTON_HEIGHT 44
+#define BUTTON_HEIGHT 35
 #define CONTAINER_WIDTH 300
+#define SEPARATOR_GAP 5
+#define SEPARATOR_HEIGHT 4
 
 const UIWindowLevel UIWindowLevelSIAlert = 1999.0;  // don't overlap system's alert
 const UIWindowLevel UIWindowLevelSIAlertBackground = 1998.0; // below the alert window
@@ -35,6 +37,7 @@ static NSMutableArray *__si_alert_queue;
 static BOOL __si_alert_animating;
 static SIAlertBackgroundWindow *__si_alert_background_window;
 static SIAlertView *__si_alert_current_view;
+static BOOL attributed = NO;
 
 @interface UIWindow (SIAlert_Utils)
 
@@ -101,6 +104,8 @@ static SIAlertView *__si_alert_current_view;
 
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *messageLabel;
+@property (nonatomic, strong) UIImageView *separatorImageView;
+
 @property (nonatomic, strong) UIView *containerView;
 @property (nonatomic, strong) NSMutableArray *buttons;
 
@@ -306,10 +311,25 @@ static SIAlertView *__si_alert_current_view;
 	return [self initWithTitle:nil andMessage:nil];
 }
 
+- (id)initWithAttributedTitle:(NSAttributedString*)title message:(NSAttributedString*)message andSeparator:(UIImage*)separatorImage
+{
+    self = [super init];
+    
+    if (self) {
+        attributed = YES;
+        _attributedTitle = title;
+        _attributedMessage = message;
+        _separator = separatorImage;
+        self.items = [[NSMutableArray alloc] init];
+    }
+    return self;
+}
+
 - (id)initWithTitle:(NSString *)title andMessage:(NSString *)message
 {
 	self = [super init];
 	if (self) {
+        attributed = NO;
 		_title = title;
         _message = message;
 		self.items = [[NSMutableArray alloc] init];
@@ -770,8 +790,15 @@ static SIAlertView *__si_alert_current_view;
     
     CGFloat y = CONTENT_PADDING_TOP;
 	if (self.titleLabel) {
-        self.titleLabel.text = self.title;
+        
+        if (attributed) {
+            self.titleLabel.attributedText = self.attributedTitle;
+        }else{
+            self.titleLabel.text = self.title;
+        }
+        
         CGFloat height = [self heightForTitleLabel];
+        
         self.titleLabel.frame = CGRectMake(CONTENT_PADDING_LEFT, y, self.containerView.bounds.size.width - CONTENT_PADDING_LEFT * 2, height);
         y += height;
 	}
@@ -779,11 +806,28 @@ static SIAlertView *__si_alert_current_view;
         if (y > CONTENT_PADDING_TOP) {
             y += GAP;
         }
-        self.messageLabel.text = self.message;
+        
+        if (attributed) {
+            self.messageLabel.attributedText = self.attributedMessage;
+        }else{
+            self.messageLabel.text = self.message;
+        }
+        
         CGFloat height = [self heightForMessageLabel];
+        
         self.messageLabel.frame = CGRectMake(CONTENT_PADDING_LEFT, y, self.containerView.bounds.size.width - CONTENT_PADDING_LEFT * 2, height);
         y += height;
     }
+    
+    if (self.separatorImageView) {
+        if (y > CONTENT_PADDING_TOP) {
+            y += SEPARATOR_GAP;
+        }
+    
+        self.separatorImageView.frame = CGRectMake(0, y, self.containerView.bounds.size.width, SEPARATOR_HEIGHT);
+        y += SEPARATOR_HEIGHT;
+    }
+    
     if (self.items.count > 0) {
         if (y > CONTENT_PADDING_TOP) {
             y += GAP;
@@ -814,15 +858,23 @@ static SIAlertView *__si_alert_current_view;
 - (CGFloat)preferredHeight
 {
 	CGFloat height = CONTENT_PADDING_TOP;
-	if (self.title) {
+	if (self.title || self.attributedTitle) {
 		height += [self heightForTitleLabel];
 	}
-    if (self.message) {
+    if (self.message || self.attributedMessage) {
         if (height > CONTENT_PADDING_TOP) {
             height += GAP;
         }
         height += [self heightForMessageLabel];
     }
+    if (self.separator) {
+        if (height > CONTENT_PADDING_TOP) {
+            height += SEPARATOR_GAP;
+        }
+        
+        height += SEPARATOR_HEIGHT;
+    }
+    
     if (self.items.count > 0) {
         if (height > CONTENT_PADDING_TOP) {
             height += GAP;
@@ -843,17 +895,17 @@ static SIAlertView *__si_alert_current_view;
 - (CGFloat)heightForTitleLabel
 {
     if (self.titleLabel) {
-        CGSize size = [self.title sizeWithFont:self.titleLabel.font
-                                   minFontSize:
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_6_0
-                       self.titleLabel.font.pointSize * self.titleLabel.minimumScaleFactor
-#else
-                       self.titleLabel.minimumFontSize
-#endif
-                                actualFontSize:nil
-                                      forWidth:CONTAINER_WIDTH - CONTENT_PADDING_LEFT * 2
-                                 lineBreakMode:self.titleLabel.lineBreakMode];
-        return size.height;
+        
+        CGRect bounds;
+        
+        if (attributed) {
+            bounds = [self.attributedTitle boundingRectWithSize:CGSizeMake(CONTAINER_WIDTH - CONTENT_PADDING_LEFT * 2, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin context:nil];
+            
+        }else{
+            bounds = [self.title boundingRectWithSize:CGSizeMake(CONTAINER_WIDTH - CONTENT_PADDING_LEFT * 2, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:[NSDictionary dictionaryWithObjectsAndKeys:self.titleLabel.font,NSFontAttributeName,nil] context:nil];
+        }
+        
+        return bounds.size.height;
     }
     return 0;
 }
@@ -861,13 +913,21 @@ static SIAlertView *__si_alert_current_view;
 - (CGFloat)heightForMessageLabel
 {
     CGFloat minHeight = MESSAGE_MIN_LINE_COUNT * self.messageLabel.font.lineHeight;
+    
     if (self.messageLabel) {
+        
+        CGRect bounds;
         CGFloat maxHeight = MESSAGE_MAX_LINE_COUNT * self.messageLabel.font.lineHeight;
-        CGSize size = [self.message sizeWithFont:self.messageLabel.font
-                               constrainedToSize:CGSizeMake(CONTAINER_WIDTH - CONTENT_PADDING_LEFT * 2, maxHeight)
-                                   lineBreakMode:self.messageLabel.lineBreakMode];
-        return MAX(minHeight, size.height);
+        
+        if (attributed) {
+            bounds = [self.attributedMessage boundingRectWithSize:CGSizeMake(CONTAINER_WIDTH - CONTENT_PADDING_LEFT * 2, maxHeight) options:NSStringDrawingUsesLineFragmentOrigin context:nil];
+        }else{
+            bounds = [self.message boundingRectWithSize:CGSizeMake(CONTAINER_WIDTH - CONTENT_PADDING_LEFT * 2, maxHeight) options:NSStringDrawingUsesLineFragmentOrigin attributes:[NSDictionary dictionaryWithObjectsAndKeys:self.messageLabel.font,NSFontAttributeName,nil] context:nil];
+        }
+    
+        return MAX(minHeight, bounds.size.height);
     }
+    
     return minHeight;
 }
 
@@ -878,6 +938,7 @@ static SIAlertView *__si_alert_current_view;
     [self setupContainerView];
     [self updateTitleLabel];
     [self updateMessageLabel];
+    [self updateSeparatorImageView];
     [self setupButtons];
     [self invalidateLayout];
 }
@@ -888,6 +949,8 @@ static SIAlertView *__si_alert_current_view;
     self.containerView = nil;
     self.titleLabel = nil;
     self.messageLabel = nil;
+    self.attributedTitle = nil;
+    self.attributedMessage = nil;
     [self.buttons removeAllObjects];
     [self.alertWindow removeFromSuperview];
     self.alertWindow = nil;
@@ -907,7 +970,7 @@ static SIAlertView *__si_alert_current_view;
 
 - (void)updateTitleLabel
 {
-	if (self.title) {
+	if (self.title || self.attributedTitle) {
 		if (!self.titleLabel) {
 			self.titleLabel = [[UILabel alloc] initWithFrame:self.bounds];
 			self.titleLabel.textAlignment = NSTextAlignmentCenter;
@@ -935,7 +998,7 @@ static SIAlertView *__si_alert_current_view;
 
 - (void)updateMessageLabel
 {
-    if (self.message) {
+    if (self.message || self.attributedMessage) {
         if (!self.messageLabel) {
             self.messageLabel = [[UILabel alloc] initWithFrame:self.bounds];
             self.messageLabel.textAlignment = NSTextAlignmentCenter;
@@ -953,6 +1016,32 @@ static SIAlertView *__si_alert_current_view;
         [self.messageLabel removeFromSuperview];
         self.messageLabel = nil;
     }
+    [self invalidateLayout];
+}
+
+- (void)updateSeparatorImageView
+{
+    if (self.separator) {
+        
+        if (!self.separatorImageView) {
+            
+            self.separatorImageView  = [[UIImageView alloc] initWithFrame:self.bounds];
+            self.separatorImageView.backgroundColor = [UIColor clearColor];
+            self.separatorImageView.image = self.separator;
+            self.separatorImageView.contentMode = UIViewContentModeScaleAspectFit;
+            
+            [self.containerView addSubview:self.separatorImageView];
+            
+    #if DEBUG_LAYOUT
+            self.separatorImageView.backgroundColor = [UIColor redColor];
+    #endif
+            
+        }
+    }else{
+        [self.separatorImageView removeFromSuperview];
+        self.separatorImageView = nil;
+    }
+    
     [self invalidateLayout];
 }
 

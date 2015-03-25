@@ -23,21 +23,28 @@
     [super viewDidLoad];
 #if TEST_UIAPPEARANCE
     [[SIAlertView appearance] setMessageFont:[UIFont systemFontOfSize:13]];
-    [[SIAlertView appearance] setTitleColor:[UIColor greenColor]];
-    [[SIAlertView appearance] setMessageColor:[UIColor purpleColor]];
+    
+    [[SIAlertView appearance] setTitleColor:[UIColor blackColor]];
+    [[SIAlertView appearance] setMessageColor:[UIColor blackColor]];
     [[SIAlertView appearance] setCornerRadius:12];
     [[SIAlertView appearance] setShadowRadius:20];
-    [[SIAlertView appearance] setViewBackgroundColor:[UIColor colorWithRed:0.891 green:0.936 blue:0.978 alpha:1.000]];
-    [[SIAlertView appearance] setButtonColor:[UIColor greenColor]];
-    [[SIAlertView appearance] setCancelButtonColor:[UIColor redColor]];
-    [[SIAlertView appearance] setDestructiveButtonColor:[UIColor blueColor]];
+    
+    //[[SIAlertView appearance] setViewBackgroundColor:[UIColor colorWithRed:0.891 green:0.936 blue:0.978 alpha:1.000]];
+    
+    
+    [[SIAlertView appearance] setButtonColor:[UIColor whiteColor]];
+    [[SIAlertView appearance] setCancelButtonColor:[UIColor colorWithRed:248.0/255.0 green:148.0/255.0 blue:34.0/255.0 alpha:1]];
+    
+    
+    //[[SIAlertView appearance] setDestructiveButtonColor:[UIColor blueColor]];
 
-    [[SIAlertView appearance] setDefaultButtonImage:[[UIImage imageNamed:@"button-default"] resizableImageWithCapInsets:UIEdgeInsetsMake(15,5,14,6)] forState:UIControlStateNormal];
-    [[SIAlertView appearance] setDefaultButtonImage:[[UIImage imageNamed:@"button-default-d"] resizableImageWithCapInsets:UIEdgeInsetsMake(15,5,14,6)] forState:UIControlStateHighlighted];
-    [[SIAlertView appearance] setCancelButtonImage:[[UIImage imageNamed:@"button-cancel"] resizableImageWithCapInsets:UIEdgeInsetsMake(15,5,14,6)] forState:UIControlStateNormal];
-    [[SIAlertView appearance] setCancelButtonImage:[[UIImage imageNamed:@"button-cancel-d"] resizableImageWithCapInsets:UIEdgeInsetsMake(15,5,14,6)] forState:UIControlStateHighlighted];
-    [[SIAlertView appearance] setDestructiveButtonImage:[[UIImage imageNamed:@"button-destructive"] resizableImageWithCapInsets:UIEdgeInsetsMake(15,5,14,6)] forState:UIControlStateNormal];
-    [[SIAlertView appearance] setDestructiveButtonImage:[[UIImage imageNamed:@"button-destructive-d"] resizableImageWithCapInsets:UIEdgeInsetsMake(15,5,14,6)] forState:UIControlStateHighlighted];
+    [[SIAlertView appearance] setDefaultButtonImage:[UIImage imageNamed:@"buttonbg.png"] forState:UIControlStateNormal];
+    [[SIAlertView appearance] setDefaultButtonImage:[[UIImage imageNamed:@"buttonbg.png"]
+                                                     resizableImageWithCapInsets:UIEdgeInsetsZero] forState:UIControlStateHighlighted];
+    
+    //[[SIAlertView appearance] setCancelButtonImage:[[UIImage imageNamed:@"button-cancel"] resizableImageWithCapInsets:UIEdgeInsetsMake(15,5,14,6)] forState:UIControlStateNormal];
+    //[[SIAlertView appearance] setCancelButtonImage:[[UIImage imageNamed:@"button-cancel-d"] resizableImageWithCapInsets:UIEdgeInsetsMake(15,5,14,6)] forState:UIControlStateHighlighted];
+    
 #endif
 }
 
@@ -45,7 +52,9 @@
 
 - (IBAction)alert1:(id)sender
 {
-    SIAlertView *alertView = [[SIAlertView alloc] initWithTitle:@"Title1" andMessage:@"Count down"];
+    SIAlertView *alertView = [[SIAlertView alloc] initWithTitle:@"Title1" andMessage:@"Count 3"];
+    
+    
     [alertView addButtonWithTitle:@"Button1"
                              type:SIAlertViewButtonTypeDefault
                           handler:^(SIAlertView *alertView) {
@@ -106,36 +115,57 @@
 
 - (IBAction)alert2:(id)sender
 {
-    SIAlertView *alertView = [[SIAlertView alloc] initWithTitle:@"Title2" andMessage:@"Message2"];
+
+    NSString *title = @"Location Detected: New York, NY";
+    
+    NSMutableAttributedString *titleStr = [[NSMutableAttributedString alloc] initWithString:title];
+    
+    [titleStr addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIFont systemFontOfSize:16.0f],NSFontAttributeName,nil] range:NSMakeRange(0, titleStr.length)];
+    [titleStr addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIFont boldSystemFontOfSize:16.0f],NSFontAttributeName,nil] range:NSMakeRange(titleStr.length - 2, 2)];
+    
+    NSString *message  = @"We are currently not available in New York, NY but we may be on your shores sooner than you think.";
+    
+    NSMutableAttributedString *messageStr = [[NSMutableAttributedString alloc] initWithString:message attributes:nil];
+    
+    
+    [messageStr addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIFont systemFontOfSize:14.0f],NSFontAttributeName,nil] range:NSMakeRange(0, messageStr.length)];
+
+    [messageStr addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIFont boldSystemFontOfSize:14.0f],NSFontAttributeName,nil] range:NSMakeRange([message rangeOfString:@"New York, NY"].location, [message rangeOfString:@"New York, NY"].length)];
+    
+    
+    SIAlertView *alertView = [[SIAlertView alloc] initWithAttributedTitle:titleStr message:messageStr andSeparator:[UIImage imageNamed:@"border.png"]];
+    
+    
     [alertView addButtonWithTitle:@"Cancel"
                              type:SIAlertViewButtonTypeCancel
                           handler:^(SIAlertView *alertView) {
-                              NSLog(@"Cancel Clicked");
+                              //NSLog(@"Cancel Clicked");
                           }];
-    [alertView addButtonWithTitle:@"OK"
+    
+    
+    [alertView addButtonWithTitle:@"Select Location"
                              type:SIAlertViewButtonTypeDefault
                           handler:^(SIAlertView *alertView) {
-                              NSLog(@"OK Clicked");
-                              
-                              [self alert3:nil];
-                              [self alert3:nil];
+                             // NSLog(@"OK Clicked");
                           }];
-    alertView.titleColor = [UIColor blueColor];
-    alertView.cornerRadius = 10;
+    
+    //alertView.titleColor = [UIColor blueColor];
+    
+    alertView.cornerRadius = 5;
     alertView.buttonFont = [UIFont boldSystemFontOfSize:15];
     alertView.transitionStyle = SIAlertViewTransitionStyleBounce;
     
     alertView.willShowHandler = ^(SIAlertView *alertView) {
-        NSLog(@"%@, willShowHandler2", alertView);
+       // NSLog(@"%@, willShowHandler2", alertView);
     };
     alertView.didShowHandler = ^(SIAlertView *alertView) {
-        NSLog(@"%@, didShowHandler2", alertView);
+       // NSLog(@"%@, didShowHandler2", alertView);
     };
     alertView.willDismissHandler = ^(SIAlertView *alertView) {
-        NSLog(@"%@, willDismissHandler2", alertView);
+        //NSLog(@"%@, willDismissHandler2", alertView);
     };
     alertView.didDismissHandler = ^(SIAlertView *alertView) {
-        NSLog(@"%@, didDismissHandler2", alertView);
+        //NSLog(@"%@, didDismissHandler2", alertView);
     };
     
     [alertView show];

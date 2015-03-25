@@ -42,8 +42,12 @@ typedef void(^SIAlertViewHandler)(SIAlertView *alertView);
 
 @interface SIAlertView : UIView
 
+@property (nonatomic, copy) NSAttributedString *attributedTitle;
+@property (nonatomic, copy) NSAttributedString *attributedMessage;
+
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *message;
+@property (nonatomic, copy) UIImage *separator;
 
 @property (nonatomic, assign) SIAlertViewTransitionStyle transitionStyle; // default is SIAlertViewTransitionStyleSlideFromBottom
 @property (nonatomic, assign) SIAlertViewBackgroundStyle backgroundStyle; // default is SIAlertViewButtonTypeGradient
@@ -73,6 +77,7 @@ typedef void(^SIAlertViewHandler)(SIAlertView *alertView);
 - (void)setDestructiveButtonImage:(UIImage *)destructiveButtonImage forState:(UIControlState)state NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
 - (id)initWithTitle:(NSString *)title andMessage:(NSString *)message;
+- (id)initWithAttributedTitle:(NSAttributedString*)title message:(NSAttributedString*)message andSeparator:(UIImage*)separatorImage;
 - (void)addButtonWithTitle:(NSString *)title type:(SIAlertViewButtonType)type handler:(SIAlertViewHandler)handler;
 
 - (void)show;
