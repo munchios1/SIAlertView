@@ -23,7 +23,7 @@ NSString *const SIAlertViewDidDismissNotification = @"SIAlertViewDidDismissNotif
 #define CONTENT_PADDING_LEFT 10
 #define CONTENT_PADDING_TOP 12
 #define CONTENT_PADDING_BOTTOM 10
-#define BUTTON_HEIGHT 35
+#define BUTTON_HEIGHT 32
 #define CONTAINER_WIDTH 300
 #define SEPARATOR_GAP 5
 #define SEPARATOR_HEIGHT 4
@@ -311,7 +311,7 @@ static BOOL attributed = NO;
 	return [self initWithTitle:nil andMessage:nil];
 }
 
-- (id)initWithAttributedTitle:(NSAttributedString*)title message:(NSAttributedString*)message andSeparator:(UIImage*)separatorImage
+- (id)initWithAttributedTitle:(NSMutableAttributedString*)title message:(NSMutableAttributedString*)message andSeparator:(UIImage*)separatorImage
 {
     self = [super init];
     
@@ -319,6 +319,19 @@ static BOOL attributed = NO;
         attributed = YES;
         _attributedTitle = title;
         _attributedMessage = message;
+        _separator = separatorImage;
+        self.items = [[NSMutableArray alloc] init];
+    }
+    return self;
+}
+
+- (id)initWithTitle:(NSString *)title andMessage:(NSString *)message withSeparator:(UIImage*)separatorImage
+{
+    self = [super init];
+    if (self) {
+        attributed = NO;
+        _title = title;
+        _message = message;
         _separator = separatorImage;
         self.items = [[NSMutableArray alloc] init];
     }
@@ -899,8 +912,33 @@ static BOOL attributed = NO;
         CGRect bounds;
         
         if (attributed) {
-            bounds = [self.attributedTitle boundingRectWithSize:CGSizeMake(CONTAINER_WIDTH - CONTENT_PADDING_LEFT * 2, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin context:nil];
             
+            NSMutableAttributedString *attrTitle = [[NSMutableAttributedString alloc] initWithString:self.attributedTitle.string attributes:nil];
+            
+            NSDictionary *appearanceAttribute = [NSDictionary dictionaryWithObjectsAndKeys:self.titleLabel.font,NSFontAttributeName,nil];
+
+            NSMutableArray *priorityAttributes = [[NSMutableArray alloc] init];
+            
+            [self.attributedTitle enumerateAttributesInRange:NSMakeRange(0, self.attributedTitle.length) options:NSAttributedStringEnumerationReverse usingBlock:^(NSDictionary *attrs, NSRange range, BOOL *stop) {
+                
+                if ([attrs count]>0) {
+                    NSMutableDictionary *attributeDict = [[NSMutableDictionary alloc] init];
+                    [attributeDict setObject:attrs forKey:@"attr"];
+                    [attributeDict setObject:NSStringFromRange(range) forKey:@"range"];
+                    
+                    [priorityAttributes addObject:attributeDict];
+                }
+            }];
+
+            [attrTitle addAttributes:appearanceAttribute range:NSMakeRange(0, self.attributedTitle.length)];
+            
+            if (priorityAttributes.count > 0) {
+                [priorityAttributes enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                [attrTitle addAttributes:obj[@"attr"] range:NSRangeFromString(obj[@"range"])];
+                }];
+            }
+            
+            bounds = [attrTitle boundingRectWithSize:CGSizeMake(CONTAINER_WIDTH - CONTENT_PADDING_LEFT * 2, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin context:nil];
         }else{
             bounds = [self.title boundingRectWithSize:CGSizeMake(CONTAINER_WIDTH - CONTENT_PADDING_LEFT * 2, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:[NSDictionary dictionaryWithObjectsAndKeys:self.titleLabel.font,NSFontAttributeName,nil] context:nil];
         }
@@ -920,11 +958,40 @@ static BOOL attributed = NO;
         CGFloat maxHeight = MESSAGE_MAX_LINE_COUNT * self.messageLabel.font.lineHeight;
         
         if (attributed) {
-            bounds = [self.attributedMessage boundingRectWithSize:CGSizeMake(CONTAINER_WIDTH - CONTENT_PADDING_LEFT * 2, maxHeight) options:NSStringDrawingUsesLineFragmentOrigin context:nil];
+            
+            NSMutableAttributedString *attrMessage = [[NSMutableAttributedString alloc] initWithString:self.attributedMessage.string attributes:nil];
+            
+            NSDictionary *appearanceAttribute = [NSDictionary dictionaryWithObjectsAndKeys:self.messageLabel.font,NSFontAttributeName,nil];
+            
+            NSMutableArray *priorityAttributes = [[NSMutableArray alloc] init];
+            
+            [self.attributedMessage enumerateAttributesInRange:NSMakeRange(0, self.attributedMessage.length) options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired usingBlock:^(NSDictionary *attrs, NSRange range, BOOL *stop) {
+                
+                if ([attrs count]>0) {
+                    NSMutableDictionary *attributeDict = [[NSMutableDictionary alloc] init];
+                    [attributeDict setObject:attrs forKey:@"attr"];
+                    [attributeDict setObject:NSStringFromRange(range) forKey:@"range"];
+                    
+                    [priorityAttributes addObject:attributeDict];
+                }
+            }];
+            
+            [attrMessage addAttributes:appearanceAttribute range:NSMakeRange(0, self.attributedMessage.length)];
+            
+            if (priorityAttributes.count > 0) {
+                [priorityAttributes enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                    [attrMessage addAttributes:obj[@"attr"] range:NSRangeFromString(obj[@"range"])];
+                }];
+            }
+            
+            bounds = [attrMessage boundingRectWithSize:CGSizeMake(CONTAINER_WIDTH - CONTENT_PADDING_LEFT * 2, maxHeight) options:NSStringDrawingUsesLineFragmentOrigin context:nil];
+            
+           return bounds.size.height;
+            
         }else{
             bounds = [self.message boundingRectWithSize:CGSizeMake(CONTAINER_WIDTH - CONTENT_PADDING_LEFT * 2, maxHeight) options:NSStringDrawingUsesLineFragmentOrigin attributes:[NSDictionary dictionaryWithObjectsAndKeys:self.messageLabel.font,NSFontAttributeName,nil] context:nil];
         }
-    
+        
         return MAX(minHeight, bounds.size.height);
     }
     

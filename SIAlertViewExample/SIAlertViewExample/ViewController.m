@@ -22,28 +22,22 @@
 {
     [super viewDidLoad];
 #if TEST_UIAPPEARANCE
-    [[SIAlertView appearance] setMessageFont:[UIFont systemFontOfSize:13]];
+    
+    [[SIAlertView appearance] setTitleFont:[UIFont systemFontOfSize:30]];
+    [[SIAlertView appearance] setMessageFont:[UIFont boldSystemFontOfSize:25]];
     
     [[SIAlertView appearance] setTitleColor:[UIColor blackColor]];
     [[SIAlertView appearance] setMessageColor:[UIColor blackColor]];
-    [[SIAlertView appearance] setCornerRadius:12];
+    [[SIAlertView appearance] setCornerRadius:5];
     [[SIAlertView appearance] setShadowRadius:20];
-    
-    //[[SIAlertView appearance] setViewBackgroundColor:[UIColor colorWithRed:0.891 green:0.936 blue:0.978 alpha:1.000]];
-    
+
     
     [[SIAlertView appearance] setButtonColor:[UIColor whiteColor]];
     [[SIAlertView appearance] setCancelButtonColor:[UIColor colorWithRed:248.0/255.0 green:148.0/255.0 blue:34.0/255.0 alpha:1]];
     
-    
-    //[[SIAlertView appearance] setDestructiveButtonColor:[UIColor blueColor]];
-
     [[SIAlertView appearance] setDefaultButtonImage:[UIImage imageNamed:@"buttonbg.png"] forState:UIControlStateNormal];
     [[SIAlertView appearance] setDefaultButtonImage:[[UIImage imageNamed:@"buttonbg.png"]
                                                      resizableImageWithCapInsets:UIEdgeInsetsZero] forState:UIControlStateHighlighted];
-    
-    //[[SIAlertView appearance] setCancelButtonImage:[[UIImage imageNamed:@"button-cancel"] resizableImageWithCapInsets:UIEdgeInsetsMake(15,5,14,6)] forState:UIControlStateNormal];
-    //[[SIAlertView appearance] setCancelButtonImage:[[UIImage imageNamed:@"button-cancel-d"] resizableImageWithCapInsets:UIEdgeInsetsMake(15,5,14,6)] forState:UIControlStateHighlighted];
     
 #endif
 }
@@ -115,12 +109,12 @@
 
 - (IBAction)alert2:(id)sender
 {
-
     NSString *title = @"Location Detected: New York, NY";
     
     NSMutableAttributedString *titleStr = [[NSMutableAttributedString alloc] initWithString:title];
     
     [titleStr addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIFont systemFontOfSize:16.0f],NSFontAttributeName,nil] range:NSMakeRange(0, titleStr.length)];
+    
     [titleStr addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIFont boldSystemFontOfSize:16.0f],NSFontAttributeName,nil] range:NSMakeRange(titleStr.length - 2, 2)];
     
     NSString *message  = @"We are currently not available in New York, NY but we may be on your shores sooner than you think.";
@@ -128,7 +122,7 @@
     NSMutableAttributedString *messageStr = [[NSMutableAttributedString alloc] initWithString:message attributes:nil];
     
     
-    [messageStr addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIFont systemFontOfSize:14.0f],NSFontAttributeName,nil] range:NSMakeRange(0, messageStr.length)];
+    [messageStr addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIFont systemFontOfSize:13.0f],NSFontAttributeName,nil] range:NSMakeRange(0, messageStr.length)];
 
     [messageStr addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIFont boldSystemFontOfSize:14.0f],NSFontAttributeName,nil] range:NSMakeRange([message rangeOfString:@"New York, NY"].location, [message rangeOfString:@"New York, NY"].length)];
     
@@ -149,9 +143,8 @@
                              // NSLog(@"OK Clicked");
                           }];
     
-    //alertView.titleColor = [UIColor blueColor];
     
-    alertView.cornerRadius = 5;
+    //alertView.cornerRadius = 5;
     alertView.buttonFont = [UIFont boldSystemFontOfSize:15];
     alertView.transitionStyle = SIAlertViewTransitionStyleBounce;
     
