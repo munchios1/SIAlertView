@@ -943,7 +943,7 @@ static BOOL attributed = NO;
             bounds = [self.title boundingRectWithSize:CGSizeMake(CONTAINER_WIDTH - CONTENT_PADDING_LEFT * 2, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:[NSDictionary dictionaryWithObjectsAndKeys:self.titleLabel.font,NSFontAttributeName,nil] context:nil];
         }
         
-        return bounds.size.height;
+        return bounds.size.height + 5;
     }
     return 0;
 }
