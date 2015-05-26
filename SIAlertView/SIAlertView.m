@@ -17,7 +17,7 @@ NSString *const SIAlertViewDidDismissNotification = @"SIAlertViewDidDismissNotif
 #define DEBUG_LAYOUT 0
 
 #define MESSAGE_MIN_LINE_COUNT 3
-#define MESSAGE_MAX_LINE_COUNT 5
+#define MESSAGE_MAX_LINE_COUNT 15
 #define GAP 10
 #define CANCEL_BUTTON_PADDING_TOP 5
 #define CONTENT_PADDING_LEFT 10
