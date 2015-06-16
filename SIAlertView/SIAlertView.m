@@ -21,12 +21,12 @@ NSString *const SIAlertViewDidDismissNotification = @"SIAlertViewDidDismissNotif
 #define GAP 10
 #define CANCEL_BUTTON_PADDING_TOP 5
 #define CONTENT_PADDING_LEFT 10
-#define CONTENT_PADDING_TOP 12
+#define CONTENT_PADDING_TOP 20
 #define CONTENT_PADDING_BOTTOM 10
 #define BUTTON_HEIGHT 32
 #define CONTAINER_WIDTH 300
-#define SEPARATOR_GAP 5
-#define SEPARATOR_HEIGHT 4
+#define SEPARATOR_GAP 20
+#define SEPARATOR_HEIGHT 1
 
 const UIWindowLevel UIWindowLevelSIAlert = 1999.0;  // don't overlap system's alert
 const UIWindowLevel UIWindowLevelSIAlertBackground = 1998.0; // below the alert window
@@ -308,7 +308,7 @@ static BOOL attributed = NO;
 
 - (id)init
 {
-	return [self initWithTitle:nil andMessage:nil];
+    return [self initWithTitle:nil andMessage:nil];
 }
 
 - (id)initWithAttributedTitle:(NSMutableAttributedString*)title message:(NSMutableAttributedString*)message andSeparator:(UIImage*)separatorImage
@@ -340,14 +340,14 @@ static BOOL attributed = NO;
 
 - (id)initWithTitle:(NSString *)title andMessage:(NSString *)message
 {
-	self = [super init];
-	if (self) {
+    self = [super init];
+    if (self) {
         attributed = NO;
-		_title = title;
+        _title = title;
         _message = message;
-		self.items = [[NSMutableArray alloc] init];
-	}
-	return self;
+        self.items = [[NSMutableArray alloc] init];
+    }
+    return self;
 }
 
 #pragma mark - Class methods
@@ -416,12 +416,12 @@ static BOOL attributed = NO;
 - (void)setTitle:(NSString *)title
 {
     _title = title;
-	[self invalidateLayout];
+    [self invalidateLayout];
 }
 
 - (void)setMessage:(NSString *)message
 {
-	_message = message;
+    _message = message;
     [self invalidateLayout];
 }
 
@@ -430,10 +430,10 @@ static BOOL attributed = NO;
 - (void)addButtonWithTitle:(NSString *)title type:(SIAlertViewButtonType)type handler:(SIAlertViewHandler)handler
 {
     SIAlertItem *item = [[SIAlertItem alloc] init];
-	item.title = title;
-	item.type = type;
-	item.action = handler;
-	[self.items addObject:item];
+    item.title = title;
+    item.type = type;
+    item.action = handler;
+    [self.items addObject:item];
 }
 
 - (void)show
@@ -449,7 +449,7 @@ static BOOL attributed = NO;
         self.oldKeyWindow.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
     }
 #endif
-
+    
     if (![[SIAlertView sharedQueue] containsObject:self]) {
         [[SIAlertView sharedQueue] addObject:self];
     }
@@ -802,7 +802,7 @@ static BOOL attributed = NO;
     self.containerView.layer.shadowPath = [UIBezierPath bezierPathWithRoundedRect:self.containerView.bounds cornerRadius:self.containerView.layer.cornerRadius].CGPath;
     
     CGFloat y = CONTENT_PADDING_TOP;
-	if (self.titleLabel) {
+    if (self.titleLabel) {
         
         if (attributed) {
             self.titleLabel.attributedText = self.attributedTitle;
@@ -814,7 +814,7 @@ static BOOL attributed = NO;
         
         self.titleLabel.frame = CGRectMake(CONTENT_PADDING_LEFT, y, self.containerView.bounds.size.width - CONTENT_PADDING_LEFT * 2, height);
         y += height;
-	}
+    }
     if (self.messageLabel) {
         if (y > CONTENT_PADDING_TOP) {
             y += GAP;
@@ -836,7 +836,7 @@ static BOOL attributed = NO;
         if (y > CONTENT_PADDING_TOP) {
             y += SEPARATOR_GAP;
         }
-    
+        
         self.separatorImageView.frame = CGRectMake(0, y, self.containerView.bounds.size.width, SEPARATOR_HEIGHT);
         y += SEPARATOR_HEIGHT;
     }
@@ -870,10 +870,10 @@ static BOOL attributed = NO;
 
 - (CGFloat)preferredHeight
 {
-	CGFloat height = CONTENT_PADDING_TOP;
-	if (self.title || self.attributedTitle) {
-		height += [self heightForTitleLabel];
-	}
+    CGFloat height = CONTENT_PADDING_TOP;
+    if (self.title || self.attributedTitle) {
+        height += [self heightForTitleLabel];
+    }
     if (self.message || self.attributedMessage) {
         if (height > CONTENT_PADDING_TOP) {
             height += GAP;
@@ -902,7 +902,7 @@ static BOOL attributed = NO;
         }
     }
     height += CONTENT_PADDING_BOTTOM;
-	return height;
+    return height;
 }
 
 - (CGFloat)heightForTitleLabel
@@ -916,7 +916,7 @@ static BOOL attributed = NO;
             NSMutableAttributedString *attrTitle = [[NSMutableAttributedString alloc] initWithString:self.attributedTitle.string attributes:nil];
             
             NSDictionary *appearanceAttribute = [NSDictionary dictionaryWithObjectsAndKeys:self.titleLabel.font,NSFontAttributeName,nil];
-
+            
             NSMutableArray *priorityAttributes = [[NSMutableArray alloc] init];
             
             [self.attributedTitle enumerateAttributesInRange:NSMakeRange(0, self.attributedTitle.length) options:NSAttributedStringEnumerationReverse usingBlock:^(NSDictionary *attrs, NSRange range, BOOL *stop) {
@@ -929,12 +929,12 @@ static BOOL attributed = NO;
                     [priorityAttributes addObject:attributeDict];
                 }
             }];
-
+            
             [attrTitle addAttributes:appearanceAttribute range:NSMakeRange(0, self.attributedTitle.length)];
             
             if (priorityAttributes.count > 0) {
                 [priorityAttributes enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                [attrTitle addAttributes:obj[@"attr"] range:NSRangeFromString(obj[@"range"])];
+                    [attrTitle addAttributes:obj[@"attr"] range:NSRangeFromString(obj[@"range"])];
                 }];
             }
             
@@ -986,7 +986,7 @@ static BOOL attributed = NO;
             
             bounds = [attrMessage boundingRectWithSize:CGSizeMake(CONTAINER_WIDTH - CONTENT_PADDING_LEFT * 2, maxHeight) options:NSStringDrawingUsesLineFragmentOrigin context:nil];
             
-           return bounds.size.height;
+            return bounds.size.height;
             
         }else{
             bounds = [self.message boundingRectWithSize:CGSizeMake(CONTAINER_WIDTH - CONTENT_PADDING_LEFT * 2, maxHeight) options:NSStringDrawingUsesLineFragmentOrigin attributes:[NSDictionary dictionaryWithObjectsAndKeys:self.messageLabel.font,NSFontAttributeName,nil] context:nil];
@@ -1037,12 +1037,12 @@ static BOOL attributed = NO;
 
 - (void)updateTitleLabel
 {
-	if (self.title || self.attributedTitle) {
-		if (!self.titleLabel) {
-			self.titleLabel = [[UILabel alloc] initWithFrame:self.bounds];
-			self.titleLabel.textAlignment = NSTextAlignmentCenter;
+    if (self.title || self.attributedTitle) {
+        if (!self.titleLabel) {
+            self.titleLabel = [[UILabel alloc] initWithFrame:self.bounds];
+            self.titleLabel.textAlignment = NSTextAlignmentCenter;
             self.titleLabel.backgroundColor = [UIColor clearColor];
-			self.titleLabel.font = self.titleFont;
+            self.titleLabel.font = self.titleFont;
             self.titleLabel.textColor = self.titleColor;
             self.titleLabel.adjustsFontSizeToFitWidth = YES;
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_6_0
@@ -1050,16 +1050,16 @@ static BOOL attributed = NO;
 #else
             self.titleLabel.minimumFontSize = self.titleLabel.font.pointSize * 0.75;
 #endif
-			[self.containerView addSubview:self.titleLabel];
+            [self.containerView addSubview:self.titleLabel];
 #if DEBUG_LAYOUT
             self.titleLabel.backgroundColor = [UIColor redColor];
 #endif
-		}
-		self.titleLabel.text = self.title;
-	} else {
-		[self.titleLabel removeFromSuperview];
-		self.titleLabel = nil;
-	}
+        }
+        self.titleLabel.text = self.title;
+    } else {
+        [self.titleLabel removeFromSuperview];
+        self.titleLabel = nil;
+    }
     [self invalidateLayout];
 }
 
@@ -1099,9 +1099,9 @@ static BOOL attributed = NO;
             
             [self.containerView addSubview:self.separatorImageView];
             
-    #if DEBUG_LAYOUT
+#if DEBUG_LAYOUT
             self.separatorImageView.backgroundColor = [UIColor redColor];
-    #endif
+#endif
             
         }
     }else{
@@ -1125,42 +1125,42 @@ static BOOL attributed = NO;
 - (UIButton *)buttonForItemIndex:(NSUInteger)index
 {
     SIAlertItem *item = self.items[index];
-	UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-	button.tag = index;
-	button.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    button.tag = index;
+    button.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     button.titleLabel.font = self.buttonFont;
-	[button setTitle:item.title forState:UIControlStateNormal];
-	UIImage *normalImage = nil;
-	UIImage *highlightedImage = nil;
-	switch (item.type) {
-		case SIAlertViewButtonTypeCancel:
-			normalImage = [UIImage imageNamed:@"SIAlertView.bundle/button-cancel"];
-			highlightedImage = [UIImage imageNamed:@"SIAlertView.bundle/button-cancel-d"];
-			[button setTitleColor:self.cancelButtonColor forState:UIControlStateNormal];
+    [button setTitle:item.title forState:UIControlStateNormal];
+    UIImage *normalImage = nil;
+    UIImage *highlightedImage = nil;
+    switch (item.type) {
+        case SIAlertViewButtonTypeCancel:
+            normalImage = [UIImage imageNamed:@"SIAlertView.bundle/button-cancel"];
+            highlightedImage = [UIImage imageNamed:@"SIAlertView.bundle/button-cancel-d"];
+            [button setTitleColor:self.cancelButtonColor forState:UIControlStateNormal];
             [button setTitleColor:[self.cancelButtonColor colorWithAlphaComponent:0.8] forState:UIControlStateHighlighted];
-			break;
-		case SIAlertViewButtonTypeDestructive:
-			normalImage = [UIImage imageNamed:@"SIAlertView.bundle/button-destructive"];
-			highlightedImage = [UIImage imageNamed:@"SIAlertView.bundle/button-destructive-d"];
+            break;
+        case SIAlertViewButtonTypeDestructive:
+            normalImage = [UIImage imageNamed:@"SIAlertView.bundle/button-destructive"];
+            highlightedImage = [UIImage imageNamed:@"SIAlertView.bundle/button-destructive-d"];
             [button setTitleColor:self.destructiveButtonColor forState:UIControlStateNormal];
             [button setTitleColor:[self.destructiveButtonColor colorWithAlphaComponent:0.8] forState:UIControlStateHighlighted];
-			break;
-		case SIAlertViewButtonTypeDefault:
-		default:
-			normalImage = [UIImage imageNamed:@"SIAlertView.bundle/button-default"];
-			highlightedImage = [UIImage imageNamed:@"SIAlertView.bundle/button-default-d"];
-			[button setTitleColor:self.buttonColor forState:UIControlStateNormal];
+            break;
+        case SIAlertViewButtonTypeDefault:
+        default:
+            normalImage = [UIImage imageNamed:@"SIAlertView.bundle/button-default"];
+            highlightedImage = [UIImage imageNamed:@"SIAlertView.bundle/button-default-d"];
+            [button setTitleColor:self.buttonColor forState:UIControlStateNormal];
             [button setTitleColor:[self.buttonColor colorWithAlphaComponent:0.8] forState:UIControlStateHighlighted];
-			break;
-	}
-	CGFloat hInset = floorf(normalImage.size.width / 2);
-	CGFloat vInset = floorf(normalImage.size.height / 2);
-	UIEdgeInsets insets = UIEdgeInsetsMake(vInset, hInset, vInset, hInset);
-	normalImage = [normalImage resizableImageWithCapInsets:insets];
-	highlightedImage = [highlightedImage resizableImageWithCapInsets:insets];
-	[button setBackgroundImage:normalImage forState:UIControlStateNormal];
-	[button setBackgroundImage:highlightedImage forState:UIControlStateHighlighted];
-	[button addTarget:self action:@selector(buttonAction:) forControlEvents:UIControlEventTouchUpInside];
+            break;
+    }
+    CGFloat hInset = floorf(normalImage.size.width / 2);
+    CGFloat vInset = floorf(normalImage.size.height / 2);
+    UIEdgeInsets insets = UIEdgeInsetsMake(vInset, hInset, vInset, hInset);
+    normalImage = [normalImage resizableImageWithCapInsets:insets];
+    highlightedImage = [highlightedImage resizableImageWithCapInsets:insets];
+    [button setBackgroundImage:normalImage forState:UIControlStateNormal];
+    [button setBackgroundImage:highlightedImage forState:UIControlStateHighlighted];
+    [button addTarget:self action:@selector(buttonAction:) forControlEvents:UIControlEventTouchUpInside];
     
     return button;
 }
@@ -1169,12 +1169,12 @@ static BOOL attributed = NO;
 
 - (void)buttonAction:(UIButton *)button
 {
-	[SIAlertView setAnimating:YES]; // set this flag to YES in order to prevent showing another alert in action block
+    [SIAlertView setAnimating:YES]; // set this flag to YES in order to prevent showing another alert in action block
     SIAlertItem *item = self.items[button.tag];
-	if (item.action) {
-		item.action(self);
-	}
-	[self dismissAnimated:YES];
+    if (item.action) {
+        item.action(self);
+    }
+    [self dismissAnimated:YES];
 }
 
 #pragma mark - CAAnimation delegate
