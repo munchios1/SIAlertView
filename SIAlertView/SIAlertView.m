@@ -19,7 +19,7 @@ NSString *const SIAlertViewDidDismissNotification = @"SIAlertViewDidDismissNotif
 #define MESSAGE_MIN_LINE_COUNT 3
 #define MESSAGE_MAX_LINE_COUNT 15
 #define GAP 10
-#define CANCEL_BUTTON_PADDING_TOP 5
+#define CANCEL_BUTTON_PADDING_TOP 0 //5
 #define CONTENT_PADDING_LEFT 10
 #define CONTENT_PADDING_TOP 20
 #define CONTENT_PADDING_BOTTOM 10
@@ -27,6 +27,7 @@ NSString *const SIAlertViewDidDismissNotification = @"SIAlertViewDidDismissNotif
 #define CONTAINER_WIDTH 300
 #define SEPARATOR_GAP 20
 #define SEPARATOR_HEIGHT 1
+#define CANCEL_CORNER_RADIUS 2
 
 const UIWindowLevel UIWindowLevelSIAlert = 1999.0;  // don't overlap system's alert
 const UIWindowLevel UIWindowLevelSIAlertBackground = 1998.0; // below the alert window
@@ -1134,10 +1135,21 @@ static BOOL attributed = NO;
     UIImage *highlightedImage = nil;
     switch (item.type) {
         case SIAlertViewButtonTypeCancel:
+            /*
             normalImage = [UIImage imageNamed:@"SIAlertView.bundle/button-cancel"];
             highlightedImage = [UIImage imageNamed:@"SIAlertView.bundle/button-cancel-d"];
             [button setTitleColor:self.cancelButtonColor forState:UIControlStateNormal];
             [button setTitleColor:[self.cancelButtonColor colorWithAlphaComponent:0.8] forState:UIControlStateHighlighted];
+            */
+            
+            //normalImage = [UIImage imageNamed:@"SIAlertView.bundle/button-cancel"];
+            //highlightedImage = [UIImage imageNamed:@"SIAlertView.bundle/button-cancel-d"];
+            [button setTitleColor:self.cancelButtonColor forState:UIControlStateNormal];
+            [button setTitleColor:[self.cancelButtonColor colorWithAlphaComponent:0.8] forState:UIControlStateHighlighted];
+            [button.layer setCornerRadius:CANCEL_CORNER_RADIUS];
+            [button.layer setBorderWidth:1.0];
+            [button.layer setBorderColor:[UIColor colorWithRed:255/255.0f green:130/255.0f blue:8/255.0f alpha:1.0].CGColor];
+            
             break;
         case SIAlertViewButtonTypeDestructive:
             normalImage = [UIImage imageNamed:@"SIAlertView.bundle/button-destructive"];
