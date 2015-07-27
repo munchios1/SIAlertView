@@ -880,6 +880,10 @@ static BOOL attributed = NO;
             height += GAP;
         }
         height += [self heightForMessageLabel];
+        
+        if (self.attributedMessage) {
+            height += self.attributedSpace;
+        }
     }
     if (self.separator) {
         if (height > CONTENT_PADDING_TOP) {
